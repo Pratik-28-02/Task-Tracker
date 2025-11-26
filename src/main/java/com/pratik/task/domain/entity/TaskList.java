@@ -26,7 +26,7 @@ public class TaskList {
     @Column(name = "created",nullable = false)
     private LocalDateTime created;
 
-    @Column(name = "updaetd",nullable = false)
+    @Column(name = "updated",nullable = false)
     private LocalDateTime updated;
 
     @OneToMany(mappedBy = "taskList",cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
@@ -63,4 +63,30 @@ public class TaskList {
                 ", tasks=" + tasks +
                 '}';
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+
 }

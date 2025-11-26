@@ -22,6 +22,23 @@ public class TaskListMapperImpl implements TaskListMapper {
 
 
     @Override
+    public TaskListDto toDto(TaskList taskList) {
+        return new TaskListDto(
+                taskList.getId(),
+                taskList.getTitle(),
+                taskList.getDescription(),
+                Optional.ofNullable(taskList.getTasks())
+                        .map(List::size)
+                        .orElse(0),
+                calculateTaskListProgress(taskList.getTasks()),
+                Optional.ofNullable(taskList.getTasks())
+                        .map(tasks ->
+                                tasks.stream().map(taskMapper::toDto).toList()
+                        ).orElse(null)
+        );
+    }
+
+    @Override
     public TaskList fromDto(TaskListDto taskListDto) {
         return new TaskList(
                 taskListDto.id(),
@@ -36,29 +53,12 @@ public class TaskListMapperImpl implements TaskListMapper {
                 null
         );
     }
-
-    @Override
-    public TaskListDto toDto(TaskList taskList) {
-        return new TaskListDto(
-                taskList.getId(),
-                taskList.getTitle(),
-                taskList.getDescription,
-                Optional.ofNullable(taskList.getTasks())
-                        .map(List::size)
-                        .orElse(0),
-                calculateTaskListProgress(taskList.getTask()),
-                Optional.ofNullable(taskList.getTasks())
-                        .map(tasks ->
-                                tasks.stream().map(taskMapper::toDto).toList()
-                        ).orElse(null)
-        );
-    }
     private Double calculateTaskListProgress(List<Task> tasks) {
         if(null == tasks){
             return null;
         }
         long closedTaskCount = tasks.stream().filter(task -> TaskStatus.CLOSED == task.getStatus()).count();
 
-        return closedTaskCount / tasks.size();
+        return (double)closedTaskCount / tasks.size();
     }
 }
