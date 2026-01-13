@@ -1,10 +1,8 @@
 package com.pratik.task.domain.entity;
 
-import com.pratik.task.domain.dto.TaskDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -39,11 +37,11 @@ public class Task {
     @JoinColumn(name = "task_list_id")
     private TaskList taskList;
 
-    @Column(name = "updated" , nullable = false)
-    private LocalDateTime updated;
+    @Column(name = "created", nullable = false)
+    private LocalDateTime created;
 
-    public Task(UUID id, String title, String description, LocalDateTime localDateTime, TaskStatus taskStatus, TaskPriority taskPriority, TaskList taskList, LocalDateTime created, LocalDateTime updated) {
-    }
+    @Column(name = "updated", nullable = false)
+    private LocalDateTime updated;
 
     @Override
     public String toString() {
@@ -55,6 +53,7 @@ public class Task {
                 ", status=" + status +
                 ", priority=" + priority +
                 ", taskList=" + taskList +
+                ", created=" + created +
                 ", updated=" + updated +
                 '}';
     }
@@ -63,12 +62,12 @@ public class Task {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(id, task.id) && Objects.equals(title, task.title) && Objects.equals(description, task.description) && Objects.equals(dueDate, task.dueDate) && status == task.status && priority == task.priority && Objects.equals(taskList, task.taskList) && Objects.equals(updated, task.updated);
+        return Objects.equals(id, task.id) && Objects.equals(title, task.title) && Objects.equals(description, task.description) && Objects.equals(dueDate, task.dueDate) && status == task.status && priority == task.priority && Objects.equals(taskList, task.taskList) && Objects.equals(created, task.created) && Objects.equals(updated, task.updated);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, dueDate, status, priority, taskList, updated);
+        return Objects.hash(id, title, description, dueDate, status, priority, taskList, created, updated);
     }
 
     public UUID getId() {
@@ -125,6 +124,14 @@ public class Task {
 
     public void setTaskList(TaskList taskList) {
         this.taskList = taskList;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
     }
 
     public LocalDateTime getUpdated() {

@@ -26,6 +26,7 @@ public class TaskListServiceImpl implements TaskListService {
         return taskListRepository.findAll();
     }
 
+    @Transactional
     @Override
     public TaskList createTaskList(TaskList taskList) {
         if(null != taskList.getId()) {
@@ -35,15 +36,13 @@ public class TaskListServiceImpl implements TaskListService {
             throw new IllegalArgumentException("TaskList title must be present");
         }
         LocalDateTime now = LocalDateTime.now();
-        taskListRepository.save(new TaskList(
-                null,
-                taskList.getTitle(),
-                taskList.getDescription(),
-                null,
-                now,
-                now
-        ));
-        return null;
+        // Fixed: Now actually returning the saved TaskList
+        TaskList newTaskList = new TaskList();
+        newTaskList.setTitle(taskList.getTitle());
+        newTaskList.setDescription(taskList.getDescription());
+        newTaskList.setCreated(now);
+        newTaskList.setUpdated(now);
+        return taskListRepository.save(newTaskList);
     }
 
     @Override
@@ -68,6 +67,7 @@ public class TaskListServiceImpl implements TaskListService {
         return taskListRepository.save(existingTaskList);
     }
 
+    @Transactional
     @Override
     public void deleteTaskList(UUID taskListid) {
         taskListRepository.deleteById(taskListid);

@@ -8,6 +8,7 @@ import com.pratik.task.mapper.TaskListMapper;
 import com.pratik.task.mapper.TaskMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +20,6 @@ public class TaskListMapperImpl implements TaskListMapper {
     public TaskListMapperImpl(TaskMapper taskMapper) {
         this.taskMapper = taskMapper;
     }
-
 
     @Override
     public TaskListDto toDto(TaskList taskList) {
@@ -40,25 +40,30 @@ public class TaskListMapperImpl implements TaskListMapper {
 
     @Override
     public TaskList fromDto(TaskListDto taskListDto) {
-        return new TaskList(
-                taskListDto.id(),
-                taskListDto.title(),
-                taskListDto.description(),
-                Optional.ofNullable(taskListDto.tasks())
-                        .map(tasks -> tasks.stream()
-                                .map(taskMapper::fromDto)
-                                .toList()
-                        ).orElse(null),
-                null,
-                null
-        );
-    }
-    private Double calculateTaskListProgress(List<Task> tasks) {
-        if(null == tasks){
-            return null;
-        }
-        long closedTaskCount = tasks.stream().filter(task -> TaskStatus.CLOSED == task.getStatus()).count();
+        TaskList taskList = new TaskList();
+        taskList.setId(taskListDto.id());
+        taskList.setTitle(taskListDto.title());
+        taskList.setDescription(taskListDto.description());
 
-        return (double)closedTaskCount / tasks.size();
+        if (taskListDto.tasks() != null) {
+            taskList.setTasks(
+                    taskListDto.tasks().stream()
+                            .map(taskMapper::fromDto)
+                            .toList()
+            );
+        }
+
+        return taskList;
+    }
+
+    private Double calculateTaskListProgress(List<Task> tasks) {
+        if(null == tasks || tasks.isEmpty()){
+            return 0.0;
+        }
+        long closedTaskCount = tasks.stream()
+                .filter(task -> TaskStatus.CLOSED == task.getStatus())
+                .count();
+
+        return (double) closedTaskCount / tasks.size();
     }
 }
